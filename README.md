@@ -1,22 +1,21 @@
--
 
 # Task Management System – Spring Boot
 
-##  Project Description
+## Project Description
 
 This is a **Spring Boot–based asynchronous task management system** that allows users to:
 
 * Submit tasks for background execution
 * Execute tasks using a fixed-size thread pool
-* Track task status (QUEUED, RUNNING, DONE, STOPPED)
+* Track task status (`QUEUED`, `RUNNING`, `DONE`, `STOPPED`)
 * Stop running or queued tasks safely
 * Handle concurrency using Java’s built-in concurrency utilities
 
-The project is designed to demonstrate **thread pool usage, concurrency control, synchronization, and safe task cancellation** in Java.
+The project demonstrates **thread pool management, concurrency control, synchronization, and safe task cancellation** in Java.
 
 ---
 
-##  Technologies Used
+## Technologies Used
 
 * **Java 17**
 * **Spring Boot**
@@ -24,32 +23,25 @@ The project is designed to demonstrate **thread pool usage, concurrency control,
 * **Maven**
 * **Java Concurrency Utilities**
 
-   * `ThreadPoolExecutor`
-   * `ConcurrentHashMap`
-   * `CountDownLatch`
-   * `synchronized`, `volatile`
-
+  * `ThreadPoolExecutor`
+  * `ConcurrentHashMap`
+  * `CountDownLatch`
+  * `synchronized`, `volatile`
 
 ---
 
+## How to Run the Project
 
-
-
-
-## ▶️ How to Run the Project
-
-### 1️⃣ Clone the Repository
+### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/visheshtechie15/task_managment.git
 cd assignment
 ```
 
 ---
 
-### 2️⃣ Build the Project
-
-#### Windows / macOS / Linux
+### 2. Build the Project
 
 ```bash
 mvn clean install
@@ -57,84 +49,145 @@ mvn clean install
 
 ---
 
-### 3️⃣ Run the Application
+### 3. Run the Application
 
-#### Option 1: Using Maven
+#### Using Maven
 
 ```bash
 mvn spring-boot:run
 ```
 
-#### Option 2: Using Maven Wrapper
 
-**macOS / Linux**
 
-```bash
-./mvnw spring-boot:run
+---
+
+## Application Details
+
+* Server runs on: `http://localhost:8080`
+
+
+---
+
+## API Endpoints
+
+### 1. Queue a Task
+
+**Endpoint**
+
+```
+POST /queueTask
 ```
 
-**Windows**
+**Request Body**
 
-```cmd
-mvnw.cmd spring-boot:run
+```json
+{
+  "id": "task-1",
+  "task": "sample-task",
+  "taskParams": {
+    "key": "value"
+  },
+  "time": 5
+}
+```
+
+**Fields**
+
+* `id` (String): Unique task identifier
+* `task` (String): Task name or type
+* `taskParams` (Object): Optional task parameters
+* `time` (Number): Task execution time in seconds
+
+**Response**
+
+```json
+{
+  "id": "task-1",
+  "status": "RUNNING"
+}
 ```
 
 ---
 
-## 🌐 Application Details
+### 2. Check Task Status
 
-* Server starts on: **[http://localhost:8080](http://localhost:8080)**
-* No authentication required
-* REST APIs available for:
+**Endpoint**
 
-   * Queue task
-   * Check task status
-   * Stop task
+```
+POST /checkStatus
+```
+
+**Request Body**
+
+```json
+{
+  "id": "task-1"
+}
+```
+
+**Response**
+
+```json
+{
+  "id": "task-1",
+  "status": "RUNNING"
+}
+```
+
+**Possible Status Values**
+
+* `QUEUED`
+* `RUNNING`
+* `DONE`
+* `STOPPED`
 
 ---
 
-## ⚙️ Configuration
+### 3. Stop a Task
 
-Edit `src/main/resources/application.properties` if needed:
+**Endpoint**
+
+```
+POST /stopTask
+```
+
+**Request Body**
+
+```json
+{
+  "id": "task-1"
+}
+```
+
+**Response**
+
+```json
+{
+  "id": "task-1",
+  "status": "STOPPED"
+}
+```
+
+**Behavior**
+
+* Stops a task if it is queued or running
+* Interrupts the worker thread if the task is already running
+
+---
+
+## Configuration
+
+Edit `src/main/resources/application.properties` 
 
 ```properties
-# Thread pool size
-worker.pool.size=3
-
-# Application name
 spring.application.name=assignment
+worker.pool.size=3
 ```
 
-* Increase `worker.pool.size` to allow more concurrent tasks
-* Decrease it to limit resource usage
+* `worker.pool.size`: Number of concurrent worker threads
 
 ---
 
-## 🧪 Optional: Test with cURL
 
-```bash
-curl -X POST http://localhost:8080/queueTask \
-  -H "Content-Type: application/json" \
-  -d '{"id":"task-1","task":"demo","time":5}'
-```
-
----
-
-## ✅ Summary
-
-* Demonstrates **asynchronous task execution**
-* Uses **fixed-size thread pool**
-* Ensures **thread safety and proper synchronization**
-* Supports **graceful task cancellation**
-* Simple to run on **Windows and macOS**
-
----
-
-If you want, I can also:
-
-* Make this **resume-ready**
-* Convert it to **GitHub-style README**
-* Add a **diagram-only version**
-* Simplify it further for **assignment submission**
-
-Just tell me 👍
+## Summary
+This project uses **Spring Boot with Java concurrency utilities** to implement an asynchronous task management system where tasks are executed using a **fixed-size `ThreadPoolExecutor`** to control parallel execution and prevent resource exhaustion. Task state and execution metadata are maintained in a shared control object, with **`synchronized` blocks** used to ensure atomic state transitions and avoid race conditions when multiple threads access or modify task status. **`ConcurrentHashMap`** provides thread-safe storage for task tracking, while **`CountDownLatch`** is used to coordinate between threads by allowing request threads to wait until a task starts or terminates, ensuring proper synchronization and preventing premature responses.
